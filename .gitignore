@@ -1,0 +1,7 @@
+jsync.cfg
+.settings
+.gradle
+.project
+.classpath
+gradle
+bin

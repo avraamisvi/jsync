@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'br.org.jdrive.JDriveMain'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'rocks.xmpp:xmpp-core-client:0.7.0-beta-1'
+    compile 'rocks.xmpp:xmpp-core:0.7.0-beta-1'
+    compile 'rocks.xmpp:xmpp-extensions:0.7.0-beta-1'
+    compile 'rocks.xmpp:xmpp-extensions-client:0.7.0-beta-1'
+    compile	'org.json:json:20140107'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.7.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.1-1'
+}
