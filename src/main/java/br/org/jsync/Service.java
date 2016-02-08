@@ -183,7 +183,7 @@ public class Service {
 		
 		ArrayList<FileInfo> list = FileManager.get().listFileInfo();
 		
-		HashMap<String, Long> map = new FileInfoListParser().getSizeMap(list);
+		HashMap<String, Long> map = new FileInfoListParser().getSizeMap(message.knownFiles);
 		
 		transfer(0, list, map);
 		
@@ -209,7 +209,7 @@ public class Service {
 		 
 		 boolean sameSize = localSize == remoteSize;
 		 
-		 System.out.println(fileInfo.name);
+		 System.out.println(fileInfo.name + " same:" + sameSize);
 		 
 		 if(!sameSize) {
 			 if(fileInfo.type == FileInfoType.FILE)
