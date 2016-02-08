@@ -2,6 +2,7 @@ package br.org.jsync;
 
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -14,6 +15,7 @@ public class MainFrameWindow extends MainFrame {
 		// TODO Auto-generated constructor stub
 		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR));
 		treeRemote.setModel(new DefaultTreeModel(top));
+		listLog.setModel(new DefaultListModel<String>());
 	}
 	
 	public void updateFileList(List<FileInfo> list) {
