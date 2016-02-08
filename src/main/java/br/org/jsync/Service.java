@@ -239,7 +239,11 @@ public class Service {
 			fileTransfer.transfer();
 			 
 		 } else {
-			 transfer(0, fileInfo.files, remoteKnownFiles);/** transfer dir */
+			 
+			 if(fileInfo.type == FileInfoType.DIR) {
+				 transfer(0, fileInfo.files, remoteKnownFiles);/** transfer dir */
+			 }
+			 
 			 transfer(index+1, list, remoteKnownFiles);/** next */
 		 }
 	}
