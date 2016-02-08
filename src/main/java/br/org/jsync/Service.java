@@ -110,7 +110,7 @@ public class Service {
 			        fileTransfer.addFileTransferStatusListener(event -> {
 			        	FileTransferStatusEvent evloc = event;
 			        	
-			        	updateEventListener("Download of :" + evloc.getSource() + " bytes transfered" + evloc.getBytesTransferred());
+			        	updateEventListener("Downloading bytes transfered: " + evloc.getBytesTransferred());
 //			        	System.out.println(evloc.getBytesTransferred());
 //			        	System.out.println(evloc.getStatus().name());
 			        });
