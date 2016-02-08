@@ -204,7 +204,7 @@ public class Service {
 		 if(contains)
 			 remoteSize = remoteKnownFiles.get(fileInfo.path + "/" + fileInfo.name);
 		 
-		 Long localSize = fileInfo.size;
+		 long localSize = fileInfo.size;
 		 
 		 if(localSize == remoteSize)
 			 updateServiceListener(fileInfo.name + " is more recent."); 
