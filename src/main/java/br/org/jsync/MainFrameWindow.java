@@ -21,12 +21,33 @@ public class MainFrameWindow extends MainFrame {
 		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR));
 		
 		for (FileInfo fileInfo : list) {
-			top.add(new FileInfoTreeNode(fileInfo));
+			
+			FileInfoTreeNode node = new FileInfoTreeNode(fileInfo);
+			top.add(node);
+
+			if(fileInfo.type == FileInfoType.DIR) {
+				updateFileList(node, fileInfo.files);
+			}
 		}
 		
 		treeRemote.setModel(new DefaultTreeModel(top));
 		this.pack();
 	}
+	
+	public void updateFileList(FileInfoTreeNode parent, List<FileInfo> list) {
+		
+		for (FileInfo fileInfo : list) {
+			
+			FileInfoTreeNode node = new FileInfoTreeNode(fileInfo);
+			parent.add(node);
+			
+			if(fileInfo.type == FileInfoType.DIR) {
+				updateFileList(node, fileInfo.files);
+			}
+		}
+		
+	}	
+	
 	
 	class FileInfoTreeNode extends DefaultMutableTreeNode {
 		

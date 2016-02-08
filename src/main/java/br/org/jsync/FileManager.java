@@ -39,6 +39,8 @@ public class FileManager {
 			File f = new File(hmpath + File.separator + fileName);
 			FileInfo finfo = new FileInfo(fileName, "", f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE);
 			
+			System.out.println("file>>> " + f.getName());
+			
 			ret.add(finfo);
 			
 			if(f.isDirectory()) {
@@ -50,6 +52,8 @@ public class FileManager {
 	}
 	
 	private ArrayList<FileInfo> listFileInfo(File dir, String relativePath) {
+		
+		System.out.println("dir>>>>" + dir.getName());
 		
 		ArrayList<FileInfo> ret = new ArrayList<FileInfo>();
 		
