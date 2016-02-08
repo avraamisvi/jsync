@@ -37,9 +37,7 @@ public class FileManager {
 		for (String fileName : home.list()) {
 			
 			File f = new File(hmpath + File.separator + fileName);
-			FileInfo finfo = new FileInfo(fileName, "", f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE);
-			
-			System.out.println("file>>> " + f.getName());
+			FileInfo finfo = new FileInfo(fileName, "", f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE, f.length());
 			
 			ret.add(finfo);
 			
@@ -53,14 +51,13 @@ public class FileManager {
 	
 	private ArrayList<FileInfo> listFileInfo(File dir, String relativePath) {
 		
-		System.out.println("dir>>>>" + dir.getName());
 		
 		ArrayList<FileInfo> ret = new ArrayList<FileInfo>();
 		
 		for (String fileName : dir.list()) {
 			
 			File f = new File(dir.getAbsolutePath() + File.separator + fileName);
-			FileInfo finfo = new FileInfo(fileName, relativePath, f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE);
+			FileInfo finfo = new FileInfo(fileName, relativePath, f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE, f.length());
 			
 			ret.add(finfo);
 			

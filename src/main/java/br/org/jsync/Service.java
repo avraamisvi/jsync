@@ -33,15 +33,18 @@ public class Service {
 	private Properties prop;
 	XmppClient xmppClient;
 	FileTransferManager fileTransferManager;
-	String remote;
-	String localFolderHome;
+	
+	private String remote;
+	private String localFolderHome;
 	private String server;
 	private String username;
 	private String secret;
+	private String resource;
 	
 	MessageListFilesResponseCallback filesResponseCallback;
 	EventsListerner eventsListerner;
 	
+	List<FileInfo> remoteFiles;
 	
 	private Service() {
 		prop = new Properties();
@@ -53,6 +56,7 @@ public class Service {
 			username = prop.getProperty("username");
 			secret = prop.getProperty("secret");
 			localFolderHome = prop.getProperty("home");
+			resource = prop.getProperty("resource");
 			
 			xmppClient = XmppClient.create(server);
 			
@@ -123,7 +127,7 @@ public class Service {
 			});			
 			
 			xmppClient.connect();
-			xmppClient.login(username, secret, "home");
+			xmppClient.login(username, secret, resource);
 			
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
@@ -184,7 +188,7 @@ public class Service {
 			 File file = new File(fileName);
 			 
 			 FileTransfer fileTransfer = fileTransferManager.offerFile(Paths.get(fileName), fileInfo.path, 
-					 Jid.of(remote + "@"+ server + "/home"), 60000).getResult();
+					 Jid.of(username + "@"+ server + "/" + remote), 60000).getResult();
 	
 			 fileTransfer.addFileTransferStatusListener(e -> {
 				 	FileTransferStatusEvent ev = e;
@@ -225,11 +229,14 @@ public class Service {
 	public void receivRemoteFilesList(String msg) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		MessageListFilesResponse message = mapper.readValue(msg, MessageListFilesResponse.class);
-		filesResponseCallback.receiveList(message.list);
+		
+		remoteFiles = message.list;
+		
+		filesResponseCallback.receiveList(remoteFiles);
 	}	
 	
 	public void sendMessage(String msg) {
-		xmppClient.send(new Message(Jid.of(remote + "@" + server), Message.Type.CHAT, msg));
+		xmppClient.send(new Message(Jid.of(username + "@" + server + "/" + remote), Message.Type.CHAT, msg));
 	}
 	
 	public String getMessage(String message) throws JsonParseException, JsonMappingException, IOException {

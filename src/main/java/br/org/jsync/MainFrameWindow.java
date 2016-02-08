@@ -15,7 +15,7 @@ public class MainFrameWindow extends MainFrame {
 	public MainFrameWindow(MainFrameController controller) {
 		super(controller);
 		// TODO Auto-generated constructor stub
-		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR));
+		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR, 0));
 		treeRemote.setModel(new DefaultTreeModel(top));
 		listLog.setModel(new DefaultListModel<String>());
 		
@@ -67,7 +67,7 @@ public class MainFrameWindow extends MainFrame {
 	
 	public void updateFileList(List<FileInfo> list) {
 		
-		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR));
+		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR, 0));
 		
 		for (FileInfo fileInfo : list) {
 			

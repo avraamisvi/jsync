@@ -8,6 +8,7 @@ public class FileInfo {
 	String name;
 	String path;
 	FileInfoType type;
+	long size;
 	
 	List<FileInfo> files;
 	
@@ -15,11 +16,12 @@ public class FileInfo {
 		files = new ArrayList<FileInfo>();
 	}
 	
-	public FileInfo(String name, String path, FileInfoType type) {
+	public FileInfo(String name, String path, FileInfoType type, long size) {
 		this();
 		this.name = name;
 		this.type = type;
 		this.path = path;
+		this.size = size;
 	}
 	
 	public String getName() {
@@ -38,9 +40,21 @@ public class FileInfo {
 	public List<FileInfo> getFiles() {
 		return files;
 	}
-
 	public void setFiles(List<FileInfo> files) {
 		this.files = files;
+	}
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
 	}
 
 	@Override
