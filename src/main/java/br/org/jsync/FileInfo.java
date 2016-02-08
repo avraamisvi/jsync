@@ -19,6 +19,7 @@ public class FileInfo {
 		this();
 		this.name = name;
 		this.type = type;
+		this.path = path;
 	}
 	
 	public String getName() {
