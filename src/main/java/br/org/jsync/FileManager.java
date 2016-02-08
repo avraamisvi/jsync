@@ -32,7 +32,7 @@ public class FileManager {
 	
 	public ArrayList<FileInfo> listFileInfo() {
 		
-		String hmpath = prop.getProperty("home");
+		String hmpath = prop.getProperty("local.home");
 		File home = new File(hmpath);
 		ArrayList<FileInfo> ret = new ArrayList<FileInfo>();
 		
