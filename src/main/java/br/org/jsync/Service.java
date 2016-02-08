@@ -4,9 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import rocks.xmpp.addr.Jid;
@@ -48,6 +50,7 @@ public class Service {
 			remote = prop.getProperty("remote");
 			username = prop.getProperty("username");
 			secret = prop.getProperty("secret");
+			localFolderHome = prop.getProperty("home");
 			
 			xmppClient = XmppClient.create(server);
 			
@@ -79,14 +82,22 @@ public class Service {
 				
 			});
 			
-			FileTransferManager fileTransferManager = xmppClient.getManager(FileTransferManager.class);
+			fileTransferManager = xmppClient.getManager(FileTransferManager.class);
 			/** receive files */
 			fileTransferManager.addFileTransferOfferListener(e -> {
 			    try {
 			    	
 			    	FileTransferOfferEvent ev = e;
+			    	String fileName = null;
 			    	
-			        FileTransfer fileTransfer = e.accept(Paths.get(localFolderHome + File.separator + ev.getName())).getResult();
+			    	if(!ev.getDescription().isEmpty()) {
+			    		Files.createDirectories(Paths.get(localFolderHome + File.separator + ev.getDescription()));
+			    		fileName = localFolderHome + File.separator + ev.getDescription() + File.separator + ev.getName();
+			    	} else {
+			    		fileName = localFolderHome + File.separator + ev.getName();
+			    	}
+			    	
+			        FileTransfer fileTransfer = e.accept(Paths.get(fileName)).getResult();
 			        
 			        fileTransfer.addFileTransferStatusListener(event -> {
 			        	FileTransferStatusEvent evloc = event;
@@ -129,38 +140,55 @@ public class Service {
 		
 	}
 	
-	public void transfer(int index, ArrayList<FileInfo> list) throws XmppException, IOException {
+	public void transfer(int index, List<FileInfo> list) throws XmppException, IOException {
 		
-		 FileInfo fileInfo = new FileInfo();
 		 
 		 if(index >= list.size())
 			 return;
 		 
+		 FileInfo fileInfo = list.get(index);
+		 
+		 System.out.println("Try to upload: " + fileInfo);
+		 
 		 if(fileInfo.type == FileInfoType.FILE) {
 			 
-			 File file = new File(localFolderHome + File.separator + fileInfo.name);
+			 String fileName;
 			 
-			 FileTransfer fileTransfer = fileTransferManager.offerFile(Paths.get(localFolderHome + File.separator + fileInfo.name), "File", 
+			 if(fileInfo.path != null && !fileInfo.path.isEmpty()) {
+				 fileName = localFolderHome + File.separator + fileInfo.path + File.separator + fileInfo.name;
+			 } else {
+				 fileName = localFolderHome + File.separator + fileInfo.name;
+			 }
+			 
+			 File file = new File(fileName);
+			 
+			 FileTransfer fileTransfer = fileTransferManager.offerFile(Paths.get(fileName), fileInfo.path, 
 					 Jid.of(remote + "@"+ server + "/home"), 60000).getResult();
 	
 			 fileTransfer.addFileTransferStatusListener(e -> {
 				 	FileTransferStatusEvent ev = e;
 				    try {
+				    	System.out.println(ev.getStatus().name());
 						updateProgress(e.getBytesTransferred(), file.length(), index, list);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 			 });
-			 
+
+			fileTransfer.transfer();
 			 
 		 } else {
-			 transfer(index+1, list);
+			 transfer(0, fileInfo.files);/** transfer dir */
+			 transfer(index+1, list);/** next */
 		 }
 	}
 	
 	
-	private void updateProgress(long bytesTransferred, long length, int index, ArrayList<FileInfo> list) throws XmppException, IOException {
+	private void updateProgress(long bytesTransferred, long length, int index, List<FileInfo> list) throws XmppException, IOException {
 		// TODO Auto-generated method stub
+		
+		System.out.println("enviando:" + bytesTransferred + " len: " + length);
+		
 		if(bytesTransferred >= length) {
 			transfer(index+1, list);
 		}

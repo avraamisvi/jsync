@@ -12,14 +12,20 @@ public class MainFrameWindow extends MainFrame {
 	public MainFrameWindow(MainFrameController controller) {
 		super(controller);
 		// TODO Auto-generated constructor stub
-		top = new FileInfoTreeNode(new FileInfo("Remote Files", FileInfoType.DIR));
+		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR));
 		treeRemote.setModel(new DefaultTreeModel(top));
 	}
 	
 	public void updateFileList(List<FileInfo> list) {
+		
+		top = new FileInfoTreeNode(new FileInfo("Remote Files", "", FileInfoType.DIR));
+		
 		for (FileInfo fileInfo : list) {
 			top.add(new FileInfoTreeNode(fileInfo));
 		}
+		
+		treeRemote.setModel(new DefaultTreeModel(top));
+		this.pack();
 	}
 	
 	class FileInfoTreeNode extends DefaultMutableTreeNode {

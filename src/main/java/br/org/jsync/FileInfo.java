@@ -1,15 +1,22 @@
 package br.org.jsync;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FileInfo {
 
 	String name;
+	String path;
 	FileInfoType type;
 	
+	List<FileInfo> files;
+	
 	public FileInfo() {
+		files = new ArrayList<FileInfo>();
 	}
 	
-	public FileInfo(String name, FileInfoType type) {
-		super();
+	public FileInfo(String name, String path, FileInfoType type) {
+		this();
 		this.name = name;
 		this.type = type;
 	}
@@ -27,8 +34,16 @@ public class FileInfo {
 		this.type = type;
 	}
 	
+	public List<FileInfo> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<FileInfo> files) {
+		this.files = files;
+	}
+
 	@Override
 	public String toString() {
-		return name + ":" + type;
+		return path + ":" + name + ":" + type;
 	}
 }

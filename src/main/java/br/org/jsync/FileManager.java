@@ -37,10 +37,34 @@ public class FileManager {
 		for (String fileName : home.list()) {
 			
 			File f = new File(hmpath + File.separator + fileName);
+			FileInfo finfo = new FileInfo(fileName, "", f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE);
 			
-			ret.add(new FileInfo(fileName, f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE));
+			ret.add(finfo);
+			
+			if(f.isDirectory()) {
+				finfo.files = listFileInfo(f, fileName);
+			}
 		}
 		
 		return ret;
 	}
+	
+	private ArrayList<FileInfo> listFileInfo(File dir, String relativePath) {
+		
+		ArrayList<FileInfo> ret = new ArrayList<FileInfo>();
+		
+		for (String fileName : dir.list()) {
+			
+			File f = new File(dir.getAbsolutePath() + File.separator + fileName);
+			FileInfo finfo = new FileInfo(fileName, relativePath, f.isDirectory()? FileInfoType.DIR : FileInfoType.FILE);
+			
+			ret.add(finfo);
+			
+			if(f.isDirectory()) {
+				finfo.files = listFileInfo(f, relativePath + "/" + fileName);
+			}
+		}
+		
+		return ret;
+	}	
 }
