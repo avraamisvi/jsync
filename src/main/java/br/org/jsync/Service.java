@@ -34,12 +34,13 @@ public class Service {
 	XmppClient xmppClient;
 	FileTransferManager fileTransferManager;
 	
-	private String remote;
+	private String targetResource;
 	private String localFolderHome;
 	private String server;
 	private String username;
 	private String secret;
 	private String resource;
+	private String targetUsername;
 	
 	MessageListFilesResponseCallback filesResponseCallback;
 	ServiceListerner eventsListerner;
@@ -53,11 +54,13 @@ public class Service {
 			prop.load(new FileReader(new File("jsync.cfg")));
 			
 			server = prop.getProperty("server");
-			remote = prop.getProperty("remote");
-			username = prop.getProperty("username");
-			secret = prop.getProperty("secret");
-			localFolderHome = prop.getProperty("home");
-			resource = prop.getProperty("resource");
+			username = prop.getProperty("local.username");
+			secret = prop.getProperty("local.secret");
+			localFolderHome = prop.getProperty("local.home");
+			resource = prop.getProperty("local.resource");
+			
+			targetResource = prop.getProperty("target.resource");
+			targetUsername = prop.getProperty("target.username");
 			
 			xmppClient = XmppClient.create(server);
 			
@@ -229,7 +232,7 @@ public class Service {
 			 File file = new File(fileName);
 			 
 			 FileTransfer fileTransfer = fileTransferManager.offerFile(Paths.get(fileName), fileInfo.path, 
-					 Jid.of(username + "@"+ server + "/" + remote), 60000).getResult();
+					 Jid.of(targetUsername + "@"+ server + "/" + targetResource), 60000).getResult();
 	
 			 fileTransfer.addFileTransferStatusListener(e -> {
 				 	FileTransferStatusEvent ev = e;
@@ -283,7 +286,7 @@ public class Service {
 	}	
 	
 	public void sendMessage(String msg) {
-		xmppClient.send(new Message(Jid.of(username + "@" + server + "/" + remote), Message.Type.CHAT, msg));
+		xmppClient.send(new Message(Jid.of(targetUsername + "@" + server + "/" + targetResource), Message.Type.CHAT, msg));
 	}
 	
 	public String getMessage(String message) throws JsonParseException, JsonMappingException, IOException {
