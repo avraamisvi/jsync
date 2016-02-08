@@ -1,5 +1,7 @@
 package br.org.jsync;
 
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author abraao
@@ -29,8 +31,10 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         treeRemote = new javax.swing.JTree();
         labelRemote = new javax.swing.JLabel();
-        pgBarUpdate = new javax.swing.JProgressBar();
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        listLog = new javax.swing.JList<>();
+        jLabel2 = new javax.swing.JLabel();
+        btnClearLog = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         lblVersion = new javax.swing.JLabel();
@@ -49,7 +53,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         labelRemote.setText("Remote:");
 
-        jLabel1.setText("Update Progress");
+        jScrollPane2.setViewportView(listLog);
+
+        jLabel2.setText("Log:");
+
+        btnClearLog.setText("Clear Log");
+        btnClearLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearLogActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -59,11 +72,12 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
-                    .addComponent(pgBarUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labelRemote)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabel2)
+                            .addComponent(btnClearLog))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -73,12 +87,13 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(labelRemote)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pgBarUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClearLog))
         );
 
         btnUpdate.setText("Update Files");
@@ -144,6 +159,11 @@ public class MainFrame extends javax.swing.JFrame {
         controller.close();
     }                                 
 
+    private void btnClearLogActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        // TODO add your handling code here:
+        listLog.setModel(new DefaultListModel<String>());
+    }                         
+
 
     // Variables declaration - do not modify                     
     protected javax.swing.JButton btnRefresh;
@@ -155,6 +175,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblVersion;
     protected javax.swing.JProgressBar pgBarUpdate;
     protected javax.swing.JTree treeRemote;
+    protected javax.swing.JList<String> listLog;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton btnClearLog;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration                   
 }
 

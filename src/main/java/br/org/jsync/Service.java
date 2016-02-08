@@ -40,6 +40,8 @@ public class Service {
 	private String secret;
 	
 	MessageListFilesResponseCallback filesResponseCallback;
+	EventsListerner eventsListerner;
+	
 	
 	private Service() {
 		prop = new Properties();
@@ -63,12 +65,15 @@ public class Service {
 				
 					switch (getMessage(msg)) {
 						case JSyncMessage.LIST_REQ:
+							updateEventListener("List Files");
 							listLocalFiles();
 							break;
 						case JSyncMessage.LIST_RES:
+							updateEventListener("Receiving Files List");
 							receivRemoteFilesList(msg);
 							break;
 						case JSyncMessage.UPDATE_REQ:
+							updateEventListener("Update request");
 							uploadFiles();
 							break;							
 						default:
@@ -90,6 +95,7 @@ public class Service {
 			    	FileTransferOfferEvent ev = e;
 			    	String fileName = null;
 			    	
+			    	
 			    	if(!ev.getDescription().isEmpty()) {
 			    		Files.createDirectories(Paths.get(localFolderHome + File.separator + ev.getDescription()));
 			    		fileName = localFolderHome + File.separator + ev.getDescription() + File.separator + ev.getName();
@@ -97,13 +103,16 @@ public class Service {
 			    		fileName = localFolderHome + File.separator + ev.getName();
 			    	}
 			    	
+			    	updateEventListener("Receiving File:" + fileName);
+			    	
 			        FileTransfer fileTransfer = e.accept(Paths.get(fileName)).getResult();
 			        
 			        fileTransfer.addFileTransferStatusListener(event -> {
 			        	FileTransferStatusEvent evloc = event;
 			        	
-			        	System.out.println(evloc.getBytesTransferred());
-			        	System.out.println(evloc.getStatus().name());
+			        	updateEventListener("Download of :" + evloc.getSource() + " bytes transfered" + evloc.getBytesTransferred());
+//			        	System.out.println(evloc.getBytesTransferred());
+//			        	System.out.println(evloc.getStatus().name());
 			        });
 			        
 			        fileTransfer.transfer();
@@ -129,6 +138,16 @@ public class Service {
 		return instance;
 	}
 	
+	public void setEventsListerner(EventsListerner eventsListerner) {
+		this.eventsListerner = eventsListerner;
+	}
+	
+	protected void updateEventListener(String event) {
+		if(eventsListerner != null) {
+			eventsListerner.update(event);
+		}
+	}
+	
 	public void updateLocalFiles() throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		this.sendMessage(mapper.writeValueAsString(new MessageUpdateFilesRequest()));
@@ -148,7 +167,9 @@ public class Service {
 		 
 		 FileInfo fileInfo = list.get(index);
 		 
-		 System.out.println("Try to upload: " + fileInfo);
+//		 System.out.println("Try to upload: " + fileInfo);
+		 
+		 updateEventListener("Sending: " + fileInfo.name);
 		 
 		 if(fileInfo.type == FileInfoType.FILE) {
 			 
@@ -185,7 +206,6 @@ public class Service {
 	
 	
 	private void updateProgress(long bytesTransferred, long length, int index, List<FileInfo> list) throws XmppException, IOException {
-		// TODO Auto-generated method stub
 		
 		System.out.println("enviando:" + bytesTransferred + " len: " + length);
 		
@@ -237,4 +257,7 @@ public class Service {
 		sendMessage(msg);
 	}
 
+	public static interface EventsListerner {
+		public void update(String eventDescription);
+	}
 }
