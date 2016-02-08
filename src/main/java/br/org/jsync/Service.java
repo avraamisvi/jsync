@@ -171,7 +171,7 @@ public class Service {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		MessageUpdateFilesRequest msgUp = new MessageUpdateFilesRequest();
-		msgUp.setKnownFiles(remoteFiles);
+		msgUp.setKnownFiles(FileManager.get().listFileInfo());
 		
 		this.sendMessage(mapper.writeValueAsString(msgUp));
 	}
@@ -187,6 +187,8 @@ public class Service {
 		
 		transfer(0, list, map);
 		
+		updateServiceListener("Upload finished");
+		
 	}
 	
 	public void transfer(int index, List<FileInfo> list, HashMap<String, Long> remoteKnownFiles) throws XmppException, IOException {
@@ -200,16 +202,19 @@ public class Service {
 		 boolean contains = remoteKnownFiles.containsKey(fileInfo.path + "/" + fileInfo.name);
 		 
 		 long remoteSize = 0L;
+		 long localSize = fileInfo.size;
 		 
 		 if(contains)
 			 remoteSize = remoteKnownFiles.get(fileInfo.path + "/" + fileInfo.name);
 		 
-		 long localSize = fileInfo.size;
+		 boolean sameSize = localSize == remoteSize;
 		 
-		 if(localSize == remoteSize)
-			 updateServiceListener(fileInfo.name + " is more recent."); 
-		 else
-			 updateServiceListener("Sending: " + fileInfo.name);
+		 System.out.println(fileInfo.name);
+		 
+		 if(!sameSize) {
+			 if(fileInfo.type == FileInfoType.FILE)
+				 updateServiceListener("Sending: " + fileInfo.name);
+		 }
 		 
 		 if(fileInfo.type == FileInfoType.FILE && (localSize != remoteSize)) {
 			 
