@@ -5,7 +5,7 @@ This is a simple tool that synchronize files between two PCs using XMPP.
 
 It is necessary to create a account in one XMPP servers (https://xmpp.net/directory.php)
 
-# The configurations is simple:
+# The configuration is simple:
 
 put this in a file jsync.cfg, in the same folder of the app.
 
