@@ -87,13 +87,14 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(labelRemote)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnClearLog))
+                .addComponent(btnClearLog)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnUpdate.setText("Update Files");
@@ -162,7 +163,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void btnClearLogActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
         listLog.setModel(new DefaultListModel<String>());
-    }                         
+    }                                           
 
 
     // Variables declaration - do not modify                     

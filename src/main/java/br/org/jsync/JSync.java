@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 
+import rocks.xmpp.core.XmppException;
 import br.org.jsync.MessageListFilesResponse.MessageListFilesResponseCallback;
 import br.org.jsync.Service.EventsListerner;
 
@@ -47,8 +48,11 @@ public class JSync {
 			
 			@Override
 			public void close() {
-				// TODO Auto-generated method stub
-				
+				try {
+					Service.get().close();
+				} catch (XmppException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		

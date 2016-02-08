@@ -260,4 +260,8 @@ public class Service {
 	public static interface EventsListerner {
 		public void update(String eventDescription);
 	}
+
+	public void close() throws XmppException {
+		xmppClient.close();
+	}
 }
