@@ -3,10 +3,11 @@ package br.org.jsync;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 import rocks.xmpp.core.XmppException;
 import br.org.jsync.MessageListFilesResponse.MessageListFilesResponseCallback;
-import br.org.jsync.Service.EventsListerner;
+import br.org.jsync.Service.ServiceListerner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -56,11 +57,16 @@ public class JSync {
 			}
 		});
 		
-		service.setEventsListerner(new EventsListerner() {
+		service.setServiceListerner(new ServiceListerner() {
 			
 			@Override
 			public void update(String eventDescription) {
 				((DefaultListModel<String>)jframe.listLog.getModel()).addElement(eventDescription);
+			}
+
+			@Override
+			public void error(String message) {
+				JOptionPane.showMessageDialog(jframe, message);
 			}
 		});
 		

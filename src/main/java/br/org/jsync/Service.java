@@ -42,9 +42,10 @@ public class Service {
 	private String resource;
 	
 	MessageListFilesResponseCallback filesResponseCallback;
-	EventsListerner eventsListerner;
+	ServiceListerner eventsListerner;
 	
 	List<FileInfo> remoteFiles;
+	long lastRefreshFiles = 0L;
 	
 	private Service() {
 		prop = new Properties();
@@ -69,16 +70,16 @@ public class Service {
 				
 					switch (getMessage(msg)) {
 						case JSyncMessage.LIST_REQ:
-							updateEventListener("List Files");
+							updateServiceListener("List Files");
 							listLocalFiles();
 							break;
 						case JSyncMessage.LIST_RES:
-							updateEventListener("Receiving Files List");
+							updateServiceListener("Receiving Files List");
 							receivRemoteFilesList(msg);
 							break;
 						case JSyncMessage.UPDATE_REQ:
-							updateEventListener("Update request");
-							uploadFiles();
+							updateServiceListener("Update request");
+							uploadFiles(msg);
 							break;							
 						default:
 							break;
@@ -107,14 +108,14 @@ public class Service {
 			    		fileName = localFolderHome + File.separator + ev.getName();
 			    	}
 			    	
-			    	updateEventListener("Receiving File:" + fileName);
+			    	updateServiceListener("Receiving File:" + fileName);
 			    	
 			        FileTransfer fileTransfer = e.accept(Paths.get(fileName)).getResult();
 			        
 			        fileTransfer.addFileTransferStatusListener(event -> {
 			        	FileTransferStatusEvent evloc = event;
 			        	
-			        	updateEventListener("Downloading bytes transfered: " + evloc.getBytesTransferred());
+			        	updateServiceListener("Downloading bytes transfered: " + evloc.getBytesTransferred());
 //			        	System.out.println(evloc.getBytesTransferred());
 //			        	System.out.println(evloc.getStatus().name());
 			        });
@@ -142,28 +143,53 @@ public class Service {
 		return instance;
 	}
 	
-	public void setEventsListerner(EventsListerner eventsListerner) {
+	public void setServiceListerner(ServiceListerner eventsListerner) {
 		this.eventsListerner = eventsListerner;
 	}
 	
-	protected void updateEventListener(String event) {
+	protected void updateServiceListener(String event) {
 		if(eventsListerner != null) {
 			eventsListerner.update(event);
 		}
 	}
 	
+	protected void updateErrorServiceListener(String event) {
+		if(eventsListerner != null) {
+			eventsListerner.error(event);
+		}
+	}	
+	
 	public void updateLocalFiles() throws JsonProcessingException {
+		
+		long time = System.currentTimeMillis();
+		
+		if(time - lastRefreshFiles > 60000) {
+			updateErrorServiceListener("Please refresh remote files first.");
+			return;
+		}
+		
 		ObjectMapper mapper = new ObjectMapper();
-		this.sendMessage(mapper.writeValueAsString(new MessageUpdateFilesRequest()));
+		
+		MessageUpdateFilesRequest msgUp = new MessageUpdateFilesRequest();
+		msgUp.setKnownFiles(remoteFiles);
+		
+		this.sendMessage(mapper.writeValueAsString(msgUp));
 	}
 	
-	public void uploadFiles() throws XmppException, IOException {
+	public void uploadFiles(String msg) throws XmppException, IOException {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		MessageUpdateFilesRequest message = mapper.readValue(msg, MessageUpdateFilesRequest.class);
+		
 		ArrayList<FileInfo> list = FileManager.get().listFileInfo();
-		transfer(0, list);
+		
+		HashMap<String, Long> map = new FileInfoListParser().getSizeMap(list);
+		
+		transfer(0, list, map);
 		
 	}
 	
-	public void transfer(int index, List<FileInfo> list) throws XmppException, IOException {
+	public void transfer(int index, List<FileInfo> list, HashMap<String, Long> remoteKnownFiles) throws XmppException, IOException {
 		
 		 
 		 if(index >= list.size())
@@ -171,11 +197,15 @@ public class Service {
 		 
 		 FileInfo fileInfo = list.get(index);
 		 
-//		 System.out.println("Try to upload: " + fileInfo);
+		 long remoteSize = remoteKnownFiles.get(fileInfo.path + "/" + fileInfo.name);
+		 long localSize = fileInfo.size;
 		 
-		 updateEventListener("Sending: " + fileInfo.name);
+		 if(localSize == remoteSize)
+			 updateServiceListener(fileInfo.name + " is more recent."); 
+		 else
+			 updateServiceListener("Sending: " + fileInfo.name);
 		 
-		 if(fileInfo.type == FileInfoType.FILE) {
+		 if(fileInfo.type == FileInfoType.FILE && (localSize != remoteSize)) {
 			 
 			 String fileName;
 			 
@@ -194,7 +224,7 @@ public class Service {
 				 	FileTransferStatusEvent ev = e;
 				    try {
 				    	System.out.println(ev.getStatus().name());
-						updateProgress(e.getBytesTransferred(), file.length(), index, list);
+						updateProgress(e.getBytesTransferred(), file.length(), index, list, remoteKnownFiles);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -203,18 +233,18 @@ public class Service {
 			fileTransfer.transfer();
 			 
 		 } else {
-			 transfer(0, fileInfo.files);/** transfer dir */
-			 transfer(index+1, list);/** next */
+			 transfer(0, fileInfo.files, remoteKnownFiles);/** transfer dir */
+			 transfer(index+1, list, remoteKnownFiles);/** next */
 		 }
 	}
 	
 	
-	private void updateProgress(long bytesTransferred, long length, int index, List<FileInfo> list) throws XmppException, IOException {
+	private void updateProgress(long bytesTransferred, long length, int index, List<FileInfo> list, HashMap<String, Long> remoteKnownFiles) throws XmppException, IOException {
 		
 		System.out.println("enviando:" + bytesTransferred + " len: " + length);
 		
 		if(bytesTransferred >= length) {
-			transfer(index+1, list);
+			transfer(index+1, list, remoteKnownFiles);
 		}
 	}
 
@@ -229,6 +259,8 @@ public class Service {
 	public void receivRemoteFilesList(String msg) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		MessageListFilesResponse message = mapper.readValue(msg, MessageListFilesResponse.class);
+		
+		lastRefreshFiles = System.currentTimeMillis();
 		
 		remoteFiles = message.list;
 		
@@ -264,8 +296,9 @@ public class Service {
 		sendMessage(msg);
 	}
 
-	public static interface EventsListerner {
+	public static interface ServiceListerner {
 		public void update(String eventDescription);
+		public void error(String message);
 	}
 
 	public void close() throws XmppException {
