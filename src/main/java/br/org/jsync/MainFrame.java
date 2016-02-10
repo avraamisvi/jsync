@@ -38,6 +38,11 @@ public class MainFrame extends javax.swing.JFrame {
         btnUpdate = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         lblVersion = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        mnitmExit = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        mnitmConfiguration = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -113,6 +118,22 @@ public class MainFrame extends javax.swing.JFrame {
 
         lblVersion.setText("version 0.0.0.alpha");
 
+        jMenu1.setText("File");
+
+        mnitmExit.setText("Exit");
+        jMenu1.add(mnitmExit);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Options");
+
+        mnitmConfiguration.setText("Configuration");
+        jMenu2.add(mnitmConfiguration);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -167,19 +188,22 @@ public class MainFrame extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify                     
-    protected javax.swing.JButton btnRefresh;
-    protected javax.swing.JButton btnUpdate;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel labelRemote;
-    private javax.swing.JLabel lblVersion;
-    protected javax.swing.JProgressBar pgBarUpdate;
-    protected javax.swing.JTree treeRemote;
-    protected javax.swing.JList<String> listLog;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton btnClearLog;
-    private javax.swing.JLabel jLabel2;
+   protected javax.swing.JButton btnClearLog;
+   protected javax.swing.JButton btnRefresh;
+   protected javax.swing.JButton btnUpdate;
+   protected javax.swing.JLabel jLabel2;
+   protected javax.swing.JMenu jMenu1;
+   protected javax.swing.JMenu jMenu2;
+   protected javax.swing.JMenuBar jMenuBar1;
+   protected javax.swing.JPanel jPanel1;
+   protected javax.swing.JScrollPane jScrollPane1;
+   protected javax.swing.JScrollPane jScrollPane2;
+   protected javax.swing.JLabel labelRemote;
+   protected javax.swing.JLabel lblVersion;
+   protected javax.swing.JList<String> listLog;
+   protected javax.swing.JMenuItem mnitmConfiguration;
+   protected javax.swing.JMenuItem mnitmExit;
+   protected javax.swing.JTree treeRemote;
     // End of variables declaration                   
 }
 

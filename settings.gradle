@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'jdrive'
+rootProject.name = 'jsync'
