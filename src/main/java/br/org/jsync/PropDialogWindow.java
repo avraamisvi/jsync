@@ -19,6 +19,7 @@ public class PropDialogWindow extends PropDialog{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PropDialogWindow.this.onSave();
+				PropDialogWindow.this.setVisible(false);
 			}
 		});
 		
