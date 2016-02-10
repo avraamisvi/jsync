@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: Jsync - Early Alpha.
-Implementation-Version: 1.0
-Main-Class: br.org.jsync.JSync
-
